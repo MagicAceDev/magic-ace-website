@@ -1,0 +1,12 @@
+---
+import type { TFancyText } from './TFancyText'
+
+interface Props extends TFancyText {}
+const { text, classes } = Astro.props
+---
+
+<span
+  style='background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;'
+  class={`fancy-text ${classes}`}
+  >{text}</span
+>

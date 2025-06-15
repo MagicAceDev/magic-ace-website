@@ -1,29 +1,25 @@
 ---
+import FancyText from '@/components/ui/fancy-text/fancy-text.astro'
 import MainLayout from '../layouts/main-layout.astro'
+import SimpleEnquiry from '@/components/simple-enquiry/index.astro'
 ---
 
 <MainLayout title='MagicAce | Clever solutions to unique problems'>
-  <section>
-    <div>
-      <h1>
-        At MagicAce, we create custom software solutions that actually solve
-        your business challenges.
+  <section class='grid h-screen w-screen place-items-center'>
+    <div class='max-w-3xl space-y-12 px-4 text-center leading-tight'>
+      <h1 class='text-4xl font-bold md:text-6xl'>
+        At <FancyText text='MagicAce' /> we create clever solutions to solve your
+        business challenges.
       </h1>
-      <p>
+      <p class='text-lg md:text-xl'>
         More information coming soon! In the meantime, check out our{' '}
-        <a href='https://github.com/MagicAce'>GitHub</a> for some of our open-source
-        projects.
+        <a
+          href='https://github.com/MagicAce'
+          class='font-bold'
+          ><FancyText text='GitHub' /></a
+        > for some of our open-source projects.
       </p>
+      <SimpleEnquiry />
     </div>
   </section>
 </MainLayout>
-
-<style lang='scss'>
-  section {
-    width: 100vw;
-    height: 100vh;
-
-    display: grid;
-    place-items: center;
-  }
-</style>
