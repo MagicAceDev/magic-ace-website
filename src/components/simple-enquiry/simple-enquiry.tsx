@@ -11,7 +11,6 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
 import * as z from 'zod'
 
 const formSchema = z.object({
@@ -22,71 +21,94 @@ const formSchema = z.object({
 export default function SimpleEnquiry() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: '',
+      message: '',
+    },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const { isSubmitting, isSubmitSuccessful, errors, isSubmitted } =
+    form.formState
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      console.log(values)
-      toast(
-        <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
-          <code className='text-white'>{JSON.stringify(values, null, 2)}</code>
-        </pre>
-      )
+      const resp = await fetch('/api/enquiry', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      })
+      if (!resp.ok) {
+        throw new Error('Network response was not ok')
+      }
     } catch (error) {
       console.error('Error submitting form:', error)
-      toast.error('Failed to submit the form. Please try again.')
     }
   }
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className='mx-auto max-w-3xl space-y-8'
-      >
-        <FormField
-          control={form.control}
-          name='email'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder='john.doe@gmail.com'
-                  type='email'
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name='message'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Message</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder='Placeholder'
-                  className='resize-none'
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button
-          type='submit'
-          variant='secondary'
-          className='w-full'
+      {isSubmitSuccessful && !errors.root && (
+        <div className='rounded bg-green-100 p-3 text-green-800'>
+          Thank you for your enquiry! We'll be in touch soon.
+        </div>
+      )}
+      {errors.root && (
+        <div className='rounded bg-red-100 p-3 text-red-800'>
+          {errors.root.message || 'An error occurred. Please try again.'}
+        </div>
+      )}
+      {!isSubmitted && (
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className='mx-auto max-w-3xl space-y-8'
         >
-          Submit
-        </Button>
-      </form>
+          <FormField
+            control={form.control}
+            name='email'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder='john.doe@gmail.com'
+                    type='email'
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name='message'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Message</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder='Placeholder'
+                    className='resize-none'
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button
+            type='submit'
+            variant='secondary'
+            className='w-full'
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Submitting...' : 'Submit'}
+          </Button>
+        </form>
+      )}
     </Form>
   )
 }
