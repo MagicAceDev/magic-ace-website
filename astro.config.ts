@@ -1,5 +1,4 @@
 // @ts-check
-import node from '@astrojs/node'
 import partytown from '@astrojs/partytown'
 import react from '@astrojs/react'
 import sitemap from '@astrojs/sitemap'
@@ -10,6 +9,8 @@ import robotsTxt from 'astro-robots-txt'
 import { defineConfig } from 'astro/config'
 import { loadEnv } from 'vite'
 import { envDefinition } from './env-definition'
+
+import cloudflare from '@astrojs/cloudflare'
 
 const { SITE_URL } = loadEnv(process.env.NODE_ENV!, process.cwd(), '')
 
@@ -44,7 +45,5 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()], // Use Tailwind CSS for styling
   },
-  adapter: node({
-    mode: 'standalone', // Run on a Node.js server, can be swapped to another adapter for different environments
-  }),
+  adapter: cloudflare(),
 })
