@@ -1,4 +1,5 @@
 // @ts-check
+import node from '@astrojs/node'
 import partytown from '@astrojs/partytown'
 import react from '@astrojs/react'
 import sitemap from '@astrojs/sitemap'
@@ -10,13 +11,13 @@ import { defineConfig } from 'astro/config'
 import { loadEnv } from 'vite'
 import { envDefinition } from './env-definition'
 
-import cloudflare from '@astrojs/cloudflare'
-
 const { SITE_URL } = loadEnv(process.env.NODE_ENV!, process.cwd(), '')
 
 export default defineConfig({
-  site: SITE_URL, // The base URL for the site, used for generating absolute URLs
-  output: 'static', // Output mode for the site, 'static' for static site generation - we opt in to SSR per route
+  // The base URL for the site, used for generating absolute URLs
+  site: SITE_URL,
+  // Output mode for the site, 'static' for static site generation - we opt in to SSR per route
+  output: 'static',
   env: {
     schema: envDefinition, // Environment variable schema definition
     validateSecrets: true, // Validate secrets in production builds
@@ -45,5 +46,7 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()], // Use Tailwind CSS for styling
   },
-  adapter: cloudflare(),
+  adapter: node({
+    mode: 'standalone',
+  }),
 })
